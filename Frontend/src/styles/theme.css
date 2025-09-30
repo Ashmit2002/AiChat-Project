@@ -1,0 +1,40 @@
+/* This file contains all the theme variables for the application */
+
+:root {
+  /* Light Theme (Default) */
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  
+  --background-color: #f0f2f5;
+  --form-background-color: #ffffff;
+  --text-color-primary: #1c1e21;
+  --text-color-secondary: #606770;
+  --border-color: #dddfe2;
+  
+  --primary-button-background: #1877f2;
+  --primary-button-text: #ffffff;
+  --primary-button-hover: #166fe5;
+
+  --secondary-button-background: #42b72a;
+  --secondary-button-hover: #36a420;
+  
+  --link-color: #1877f2;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark Theme Overrides */
+    --background-color: #1c1e21;
+    --form-background-color: #242526;
+    --text-color-primary: #e4e6eb;
+    --text-color-secondary: #b0b3b8;
+    --border-color: #393a3b;
+
+    --primary-button-background: #2374e1;
+    --primary-button-hover: #3982e4;
+
+    --secondary-button-background: #36a420;
+    --secondary-button-hover: #42b72a;
+
+    --link-color: #2374e1;
+  }
+}
