@@ -77,7 +77,7 @@ const HomePage = () => {
     });
 
     tempSocket.on("ai-response", (messagePayload) => {
-      if(messagePayload!==activeChatId) {dispatch(sendingFinished()); return;}
+      if(messagePayload.chat!==activeChatId) {dispatch(sendingFinished()); return;}
       setMessages((prevMessages) => [
         ...prevMessages,
         {
