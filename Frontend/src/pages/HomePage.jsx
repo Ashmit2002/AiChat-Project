@@ -45,7 +45,7 @@ const HomePage = () => {
     if (!title) return;
 
     const response = await axios.post(
-      "http://localhost:3000/api/chat",
+      "https://aichat-project.onrender.com/api/chat",
       {
         title,
       },
@@ -67,12 +67,12 @@ const HomePage = () => {
   // Ensure at least one chat exists initially
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/chat", { withCredentials: true })
+      .get("https://aichat-project.onrender.com/api/chat", { withCredentials: true })
       .then((response) => {
         dispatch(setChats(response.data.chats.reverse()));
       });
 
-    const tempSocket = io("http://localhost:3000", {
+    const tempSocket = io("https://aichat-project.onrender.com/", {
       withCredentials: true,
     });
 
@@ -129,7 +129,7 @@ const HomePage = () => {
 
   const getMessages = async (chatId) => {
     const response = await axios.get(
-      `http://localhost:3000/api/chat/messages/${chatId}`,
+      `https://aichat-project.onrender.com/api/chat/messages/${chatId}`,
       { withCredentials: true }
     );
 
