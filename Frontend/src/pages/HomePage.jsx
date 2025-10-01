@@ -77,8 +77,7 @@ const HomePage = () => {
     });
 
     tempSocket.on("ai-response", (messagePayload) => {
-      console.log("Received AI response:", messagePayload);
-
+      if(messagePayload!==activeChatId) {dispatch(sendingFinished()); return;}
       setMessages((prevMessages) => [
         ...prevMessages,
         {
