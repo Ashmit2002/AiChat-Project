@@ -7,7 +7,13 @@ const messageModel = require("../models/message.model");
 const { createMemory, queryMemory } = require("../service/vector.service");
 
 function initiSocketServer(httpServer) {
-  const io = new Server(httpServer, {});
+  const io = new Server(httpServer, {
+    cors:{
+      origin:'http://localhost:5173',
+      allowedHeaders:["Content-Type","Authorization"],
+      credentials:true,
+    }
+  });
 
   io.use(async (socket, next) => {
     //cookie ke andr ka data pdhne ke liye ye code hai
