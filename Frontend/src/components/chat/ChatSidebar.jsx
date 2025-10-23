@@ -27,9 +27,12 @@ const ChatSidebar = ({
     }
 
     try {
-      await axios.delete(`http://localhost:3000/api/chat/${chatId}`, {
-        withCredentials: true,
-      });
+      await axios.delete(
+        `https://aichat-buddy.onrender.com/api/chat/${chatId}`,
+        {
+          withCredentials: true,
+        }
+      );
 
       dispatch(deleteChat(chatId));
       setActiveMenu(null);
@@ -47,7 +50,7 @@ const ChatSidebar = ({
 
     try {
       await axios.put(
-        `http://localhost:3000/api/chat/${chatId}`,
+        `https://aichat-buddy.onrender.com/api/chat/${chatId}`,
         {
           title: renameValue.trim(),
         },
@@ -84,7 +87,7 @@ const ChatSidebar = ({
 
     try {
       await axios.post(
-        "http://localhost:3000/api/auth/logout",
+        "https://aichat-buddy.onrender.com/api/auth/logout",
         {},
         {
           withCredentials: true,

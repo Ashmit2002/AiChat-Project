@@ -10,7 +10,7 @@ const ChatMobileBar = ({ onToggleSidebar, onNewChat }) => {
 
     try {
       await axios.post(
-        "http://localhost:3000/api/auth/logout",
+        "https://aichat-buddy.onrender.com/api/auth/logout",
         {},
         {
           withCredentials: true,
