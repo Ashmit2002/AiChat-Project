@@ -48,7 +48,7 @@ const LoginPage = () => {
       <div className="auth-container">
         <div className="auth-card" role="main" aria-labelledby="login-heading">
           <div className="auth-brand">
-            <h2>ChatGPT Clone</h2>
+            <h2>AiChat-Buddy</h2>
             <p>Powered by AI</p>
           </div>
 

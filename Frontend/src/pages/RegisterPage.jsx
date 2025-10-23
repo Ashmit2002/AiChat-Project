@@ -74,7 +74,7 @@ const RegisterPage = () => {
           aria-labelledby="register-heading"
         >
           <div className="auth-brand">
-            <h2>ChatGPT Clone</h2>
+            <h2>AiChat-Buddy</h2>
             <p>Powered by AI</p>
           </div>
 
