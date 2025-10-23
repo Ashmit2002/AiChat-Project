@@ -25,8 +25,6 @@ const HomePage = () => {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const [socket, setSocket] = useState(null);
 
-  const activeChat = chats.find((c) => c.id === activeChatId) || null;
-
   const [messages, setMessages] = useState([
     // {
     //   type: 'user',
@@ -44,40 +42,60 @@ const HomePage = () => {
     if (title) title = title.trim();
     if (!title) return;
 
-    const response = await axios.post(
-      "https://aichat-project.onrender.com/api/chat",
-      {
-        title,
-      },
-      {
-        withCredentials: true,
-      }
-    );
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/chat",
+        {
+          title,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
-    getMessages(response.data.chat._id);
-    dispatch(
-      startNewChat({
-        title: response.data.chat.title,
-        id: response.data.chat._id,
-      })
-    );
-    setSidebarOpen(false);
+      getMessages(response.data.chat._id);
+      dispatch(
+        startNewChat({
+          title: response.data.chat.title,
+          _id: response.data.chat._id,
+        })
+      );
+      setSidebarOpen(false);
+    } catch (error) {
+      console.error("Failed to create new chat:", error);
+      if (error.response?.status === 401) {
+        alert("You need to login first!");
+        window.location.href = "/login";
+      } else {
+        alert("Failed to create new chat. Please try again.");
+      }
+    }
   };
 
   // Ensure at least one chat exists initially
   useEffect(() => {
     axios
-      .get("https://aichat-project.onrender.com/api/chat", { withCredentials: true })
+      .get("http://localhost:3000/api/chat", { withCredentials: true })
       .then((response) => {
         dispatch(setChats(response.data.chats.reverse()));
+      })
+      .catch((error) => {
+        console.error("Failed to fetch chats:", error);
+        // If authentication failed, you might want to redirect to login
+        if (error.response?.status === 401) {
+          window.location.href = "/login";
+        }
       });
 
-    const tempSocket = io("https://aichat-project.onrender.com/", {
+    const tempSocket = io("http://localhost:3000/", {
       withCredentials: true,
     });
 
     tempSocket.on("ai-response", (messagePayload) => {
-      if(messagePayload.chat!==activeChatId) {dispatch(sendingFinished()); return;}
+      if (messagePayload.chat !== activeChatId) {
+        dispatch(sendingFinished());
+        return;
+      }
       setMessages((prevMessages) => [
         ...prevMessages,
         {
@@ -90,7 +108,7 @@ const HomePage = () => {
     });
 
     setSocket(tempSocket);
-  }, []);
+  }, [dispatch, activeChatId]);
 
   const sendMessage = async () => {
     const trimmed = input.trim();
@@ -127,19 +145,26 @@ const HomePage = () => {
   };
 
   const getMessages = async (chatId) => {
-    const response = await axios.get(
-      `https://aichat-project.onrender.com/api/chat/messages/${chatId}`,
-      { withCredentials: true }
-    );
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/chat/messages/${chatId}`,
+        { withCredentials: true }
+      );
 
-    console.log("Fetched messages:", response.data.messages);
+      console.log("Fetched messages:", response.data.messages);
 
-    setMessages(
-      response.data.messages.map((m) => ({
-        type: m.role === "user" ? "user" : "ai",
-        content: m.content,
-      }))
-    );
+      setMessages(
+        response.data.messages.map((m) => ({
+          type: m.role === "user" ? "user" : "ai",
+          content: m.content,
+        }))
+      );
+    } catch (error) {
+      console.error("Failed to fetch messages:", error);
+      if (error.response?.status === 401) {
+        window.location.href = "/login";
+      }
+    }
   };
 
   return (
@@ -158,6 +183,7 @@ const HomePage = () => {
         }}
         onNewChat={handleNewChat}
         open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
       <main className="chat-main" role="main">
         {messages.length === 0 && (
@@ -169,6 +195,18 @@ const HomePage = () => {
               explanations. Your chats stay in the sidebar so you can pick up
               where you left off.
             </p>
+            {chats.length === 0 && (
+              <p
+                style={{
+                  marginTop: "20px",
+                  fontStyle: "italic",
+                  color: "#888",
+                }}
+              >
+                You don't have any chats yet. Click "New" to start your first
+                conversation!
+              </p>
+            )}
           </div>
         )}
         <ChatMessages messages={messages} isSending={isSending} />

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import "../styles/auth.css";
 
 const RegisterPage = () => {
   const [form, setForm] = useState({
@@ -10,6 +11,7 @@ const RegisterPage = () => {
     password: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   function handleChange(e) {
@@ -20,11 +22,24 @@ const RegisterPage = () => {
   async function handleSubmit(e) {
     e.preventDefault();
     setSubmitting(true);
-    console.log(form);
+    setError(""); // Clear previous errors
 
-    axios
-      .post(
-        "https://aichat-project.onrender.com/api/auth/register",
+    // Basic validation
+    if (!form.email || !form.firstname || !form.lastname || !form.password) {
+      setError("All fields are required");
+      setSubmitting(false);
+      return;
+    }
+
+    if (form.password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      setSubmitting(false);
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/register",
         {
           email: form.email,
           fullName: {
@@ -36,91 +51,120 @@ const RegisterPage = () => {
         {
           withCredentials: true,
         }
-      )
-      .then((res) => {
-        console.log(res);
-        navigate("/");
-      })
-      .catch((err) => {
-        console.error(err);
-        alert("Registration failed (placeholder)");
-      });
+      );
 
-    try {
-      // Placeholder: integrate real registration logic / API call.
+      console.log(response);
+      navigate("/");
     } catch (err) {
       console.error(err);
+      const errorMessage =
+        err.response?.data?.message || "Registration failed. Please try again.";
+      setError(errorMessage);
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-    <div className="center-min-h-screen">
-      <div className="auth-card" role="main" aria-labelledby="register-heading">
-        <header className="auth-header">
-          <h1 id="register-heading">Create account</h1>
-          <p className="auth-sub">Join us and start exploring.</p>
-        </header>
-        <form className="auth-form" onSubmit={handleSubmit} noValidate>
-          <div className="field-group">
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              placeholder="you@example.com"
-              value={form.email}
-              onChange={handleChange}
-              required
-            />
+    <div className="auth-page">
+      <div className="auth-container">
+        <div
+          className="auth-card"
+          role="main"
+          aria-labelledby="register-heading"
+        >
+          <div className="auth-brand">
+            <h2>ChatGPT Clone</h2>
+            <p>Powered by AI</p>
           </div>
-          <div className="grid-2">
+
+          <header className="auth-header">
+            <h1 id="register-heading">Create your account</h1>
+            <p className="auth-sub">
+              Join us and start exploring AI conversations
+            </p>
+          </header>
+
+          <form className="auth-form" onSubmit={handleSubmit} noValidate>
+            {error && <div className="error-message">{error}</div>}
+
             <div className="field-group">
-              <label htmlFor="firstname">First name</label>
+              <label htmlFor="email">Email address</label>
               <input
-                id="firstname"
-                name="firstname"
-                placeholder="Jane"
-                value={form.firstname}
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="Enter your email"
+                value={form.email}
                 onChange={handleChange}
                 required
               />
             </div>
+
+            <div className="grid-2">
+              <div className="field-group">
+                <label htmlFor="firstname">First name</label>
+                <input
+                  id="firstname"
+                  name="firstname"
+                  type="text"
+                  autoComplete="given-name"
+                  placeholder="John"
+                  value={form.firstname}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="field-group">
+                <label htmlFor="lastname">Last name</label>
+                <input
+                  id="lastname"
+                  name="lastname"
+                  type="text"
+                  autoComplete="family-name"
+                  placeholder="Doe"
+                  value={form.lastname}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+
             <div className="field-group">
-              <label htmlFor="lastname">Last name</label>
+              <label htmlFor="password">Password</label>
               <input
-                id="lastname"
-                name="lastname"
-                placeholder="Doe"
-                value={form.lastname}
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="new-password"
+                placeholder="Create a secure password"
+                value={form.password}
                 onChange={handleChange}
                 required
+                minLength={6}
               />
+              <small
+                style={{
+                  color: "var(--color-text-muted)",
+                  fontSize: "11px",
+                  marginTop: "2px",
+                }}
+              >
+                Must be at least 6 characters long
+              </small>
             </div>
-          </div>
-          <div className="field-group">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              placeholder="Create a password"
-              value={form.password}
-              onChange={handleChange}
-              required
-              minLength={6}
-            />
-          </div>
-          <button type="submit" className="primary-btn" disabled={submitting}>
-            {submitting ? "Creating..." : "Create Account"}
-          </button>
-        </form>
-        <p className="auth-alt">
-          Already have an account? <Link to="/login">Sign in</Link>
-        </p>
+
+            <button type="submit" className="primary-btn" disabled={submitting}>
+              {submitting && <span className="loading-spinner"></span>}
+              {submitting ? "Creating account..." : "Create account"}
+            </button>
+          </form>
+
+          <p className="auth-alt">
+            Already have an account? <Link to="/login">Sign in</Link>
+          </p>
+        </div>
       </div>
     </div>
   );
