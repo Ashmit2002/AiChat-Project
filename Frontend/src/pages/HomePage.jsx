@@ -191,7 +191,7 @@ const HomePage = () => {
         {messages.length === 0 && (
           <div className="chat-welcome" aria-hidden="true">
             <div className="chip">Early Preview</div>
-            <h1>ChatGPT Clone</h1>
+            <h1>AiChat Buddy</h1>
             <p>
               Ask anything. Paste text, brainstorm ideas, or get quick
               explanations. Your chats stay in the sidebar so you can pick up
